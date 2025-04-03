@@ -12,7 +12,7 @@ def inicializar():
 inicializar()
 
 # Inicializar bolinha dentro ou fora do loop?
-bolinha = Sprite("bolinha.png", frames=1);   
+bolinha = Sprite("assets/bolinha.png", frames=1);   
 
 while True:
     janela.set_background_color([0,0,255])
