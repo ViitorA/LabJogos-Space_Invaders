@@ -30,7 +30,8 @@ def abrir_menu():
         
         # LÓGICA
         tempo_atual = pygame.time.get_ticks()
-
+        
+        # Caso não entenda o último 'and' verifique o config.py
         if config.mouse.is_button_pressed(1) and config.mouse.is_over_object(botao_jogar) and tempo_atual - config.ultimo_clique > config.delay_entre_cliques:
             config.ultimo_clique = pygame.time.get_ticks()
 

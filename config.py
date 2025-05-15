@@ -10,10 +10,8 @@ global teclado
 
 global mouse
 
-# Se isso não for implementado, um único clique do mouse pode apertar múltiplos botões em uma mesma posição entre múltiplas janelas. Exemplo: Eu aperto o botão de 
-# 'dificuldades' no menu, quando eu aperto isso ao mesmo tempo ele vai apertar a dificuldade 'médio' pois a troca de janela foi tão rápida e foi registrado tantos 
-# cliques(mesmo tendo apertado somente uma vez) que ele aperta automaticamente outro botão.
-# Logo, ao apertar um botão, ele irá verificar a condição: tempo_atual - ultimo_clique > delay_entre_cliques
+# Se isso não for implementado, um único clique do mouse pode apertar múltiplos botões em múltiplas telas caso estejam na mesma posição. Ou seja, é feito para limitar a quantidade de cliques por milisegundo. 
+# Ao apertar um botão, ele irá verificar a condição: tempo_atual - ultimo_clique > delay_entre_cliques
 # onde tempo_atual = pygame.time.get_ticks()
 #      ultimo_clique = tempo_atual
 #      delay_entre_cliques = 300 (constante)

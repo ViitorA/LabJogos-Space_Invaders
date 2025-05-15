@@ -30,7 +30,7 @@ def mostrar_dificuldades():
             config.CONTROLADOR = config.MENU
             return 0
 
-        # TODO: tornar esses ifs mais legíveis
+        # Caso não entenda o ultimo 'and' verifique o config.py
         if config.mouse.is_button_pressed(1) and config.mouse.is_over_object(botao_facil) and tempo_atual - config.ultimo_clique > config.delay_entre_cliques:
             config.dificuldade = 1
             
