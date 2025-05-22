@@ -39,7 +39,6 @@ def init():
     config.mouse = Window.get_mouse()
     config.ultimo_clique = pygame.time.get_ticks()
 
-    config.game_started = False
     config.estado = "menu"
     
     alterar_dificuldade(1) # Coloca a dificuldade em fácil

@@ -6,6 +6,8 @@ import player
 import inimigos
 
 lista_objetos = []
+
+jogo_comecou = False
 inimigo_spawnado = False
 
 def game_over():
@@ -24,6 +26,11 @@ def game_over():
     
         if config.teclado.key_pressed("ESC"):
             config.estado = "menu"
+
+            global lista_objetos, inimigo_spawnado
+            lista_objetos = []
+            inimigo_spawnado = False
+
             break
 
 def spawnar_tiro(sprites, x,y, owner):
@@ -43,8 +50,6 @@ def spawnar_tiro(sprites, x,y, owner):
             tiro["owner"] = "inimigo"
 
     lista_objetos.append(tiro)
-
-    
 
 def atualizar_objeto(objeto, delta_t):
     if objeto["type"] == "tiro":
@@ -69,25 +74,23 @@ def desenhar_objeto(objeto):
         objeto["sprite"].draw()
 
 def jogo(sprites):
+    global jogo_comecou, inimigo_spawnado, ultimo_tiro
+
     delta_t = config.janela.delta_time()
     tempo_atual = pygame.time.get_ticks()
 
-    player.init(sprites)
-    
-    global ultimo_tiro
+    config.janela.set_background_color([20,10,40])
 
-    # SPAWNA INIMIGOS
-    global inimigo_spawnado
+    if not jogo_comecou:
+        player.init(sprites)
+        player.sprite.set_position( (config.janela.width-player.sprite.width)/2, config.janela.height - player.sprite.height-20)
+        ultimo_tiro = 0.0
+
+        jogo_comecou = True
+
     if not inimigo_spawnado:
         inimigos.spawn(sprites, 10, 10, 4, 3)
         inimigo_spawnado = True
-
-    if not config.game_started:
-        player.sprite.set_position( (config.janela.width-player.sprite.width)/2, config.janela.height - player.sprite.height-20)
-        ultimo_tiro = 0.0
-        config.game_started = True
-
-    config.janela.set_background_color([20,10,40])
     
     if config.teclado.key_pressed("ESC"):
         config.estado = "menu"
