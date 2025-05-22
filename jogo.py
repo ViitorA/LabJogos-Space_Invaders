@@ -1,6 +1,7 @@
 from PPlay.sprite import *
 
 import config
+import inimigos
 
 lista_objetos = []
 inimigo_spawnado = False
@@ -23,23 +24,6 @@ def spawnar_tiro(sprites, x,y, owner):
 
     lista_objetos.append(tiro)
 
-def spawnar_inimigos(sprites, x, y, colunas, linhas):
-    inimigo = {
-        "type": "inimigo",
-        "x": x,
-        "y": y,
-        "x1": x + sprites["inimigo"].width * colunas + (sprites["inimigo"].width//2) * (colunas - 1), # largura da matriz de sprites
-        "velocidade": 200,
-        "direcao": "direita",
-
-        "sprites": [[sprites["inimigo"] for _ in range(colunas)] for _ in range(linhas)] 
-    }
-
-    print("x: " + str(inimigo["x"]))
-    print("x1: " + str(inimigo["x1"]))
-
-    lista_objetos.append(inimigo)
-
 def atualizar_objeto(objeto, delta_t):
     if objeto["type"] == "tiro":
         if objeto["y"] < 0 - objeto["height"]:
@@ -50,29 +34,11 @@ def atualizar_objeto(objeto, delta_t):
         elif objeto["owner"] == "inimigo":
             objeto["y"] += 200 * delta_t  
     elif objeto["type"] == "inimigo":
-        objeto["x"] += objeto["velocidade"] * delta_t
-        objeto["x1"] += objeto["velocidade"] * delta_t
-
-        # TODO: arrumar a descida dos monstros, o problema ou tá aqui ou no desenhar_objeto
-        if objeto["x1"] >= config.janela.width:
-            objeto["y"] += 5
-            objeto["velocidade"] *= -1
-        if objeto["x"] <= 0:
-            objeto["y"] += 5
-            objeto["velocidade"] *= -1
+        inimigos.move(objeto, delta_t)
 
 def desenhar_objeto(objeto):
     if objeto["type"] == "inimigo":
-        j = 0
-        for linha in objeto["sprites"]:
-            i = 0
-
-            for sprite in linha:
-                sprite.set_position(objeto["x"] + (sprite.width + sprite.width/2) * i, objeto["y"] + (sprite.height + sprite.height/2) * j)
-                sprite.draw()
-                i += 1
-            
-            j += 1
+        inimigos.draw(objeto)
     else:
         objeto["sprite"].set_position(objeto["x"], objeto["y"])
         objeto["sprite"].draw()
@@ -87,7 +53,7 @@ def jogo(sprites):
     # SPAWNA INIMIGOS
     global inimigo_spawnado
     if not inimigo_spawnado:
-        spawnar_inimigos(sprites, 10, 10, 4, 3)
+        inimigos.spawn(sprites, 10, 10, 4, 3)
         inimigo_spawnado = True
 
     if not config.game_started:
