@@ -10,5 +10,4 @@ global game_started
 global estado
 
 # Variáveis globais do jogador
-global velocidade_jogador
 global tempo_recarga

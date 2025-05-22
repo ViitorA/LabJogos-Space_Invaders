@@ -1,10 +1,30 @@
+import pygame
 from PPlay.sprite import *
 
 import config
+import player
 import inimigos
 
 lista_objetos = []
 inimigo_spawnado = False
+
+def game_over():
+    while True:
+        config.janela.set_background_color([80,10,40])
+
+        # Uso algumas funções do pygame para poder achar as dimensões do texto renderizado p/a centralizá-lo
+        text_surface = pygame.font.SysFont('Tahoma', 50).render("GAME OVER", True, (255,255,255))
+        text_rect = text_surface.get_rect()
+        text_rect.centerx = config.janela.width // 2
+        text_rect.centery = config.janela.height // 2
+
+        config.janela.draw_text("GAME OVER", text_rect.x, text_rect.y, size = 50, color = (255,255,255), font_name = 'Tahoma', bold = True, italic = False) 
+        
+        config.janela.update()
+    
+        if config.teclado.key_pressed("ESC"):
+            config.estado = "menu"
+            break
 
 def spawnar_tiro(sprites, x,y, owner):
     tiro = {
@@ -24,6 +44,8 @@ def spawnar_tiro(sprites, x,y, owner):
 
     lista_objetos.append(tiro)
 
+    
+
 def atualizar_objeto(objeto, delta_t):
     if objeto["type"] == "tiro":
         if objeto["y"] < 0 - objeto["height"]:
@@ -36,6 +58,9 @@ def atualizar_objeto(objeto, delta_t):
     elif objeto["type"] == "inimigo":
         inimigos.move(objeto, delta_t)
 
+        if objeto["y1"] >= player.sprite.y:
+            game_over()
+
 def desenhar_objeto(objeto):
     if objeto["type"] == "inimigo":
         inimigos.draw(objeto)
@@ -47,7 +72,8 @@ def jogo(sprites):
     delta_t = config.janela.delta_time()
     tempo_atual = pygame.time.get_ticks()
 
-    player = sprites["player"]
+    player.init(sprites)
+    
     global ultimo_tiro
 
     # SPAWNA INIMIGOS
@@ -57,7 +83,7 @@ def jogo(sprites):
         inimigo_spawnado = True
 
     if not config.game_started:
-        player.set_position( (config.janela.width-player.width)/2, config.janela.height-player.height-20)
+        player.sprite.set_position( (config.janela.width-player.sprite.width)/2, config.janela.height - player.sprite.height-20)
         ultimo_tiro = 0.0
         config.game_started = True
 
@@ -66,17 +92,16 @@ def jogo(sprites):
     if config.teclado.key_pressed("ESC"):
         config.estado = "menu"
     
-    if config.teclado.key_pressed("A") and player.x > 0:
-        player.x -= config.velocidade_jogador * delta_t
-    elif config.teclado.key_pressed("D") and player.x + player.width < config.janela.width:
-        player.x += config.velocidade_jogador * delta_t
-    
+    # Processa os inputs de movimento do jogador
+    player.movement_processing(delta_t)
+   
+    # Ao apertar a barra de espaço o jogador atira
     if config.teclado.key_pressed("SPACE") and tempo_atual - ultimo_tiro > config.tempo_recarga:
-        spawnar_tiro(sprites, player.x + player.width/2, player.y - 10, "jogador")
+        spawnar_tiro(sprites, player.sprite.x + player.sprite.width/2, player.sprite.y - 10, "jogador")
         ultimo_tiro = pygame.time.get_ticks()
 
     for objeto in lista_objetos:
         atualizar_objeto(objeto, delta_t)
         desenhar_objeto(objeto)
 
-    player.draw()
+    player.sprite.draw()
