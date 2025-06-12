@@ -19,19 +19,17 @@ def spawn(x, y, m, n):
             jogo.lista_inimigos.append(inimigo)
 
 def move_todos(lista_inimigos, delta_t):
-    # Descobrir se algum inimigo bateu na borda
-    descer = False
-    inverter = False
+    # P/a ver se algum inimigo bateu na borda
+    bateu = False
 
     for inimigo in lista_inimigos:
         novo_x = inimigo["x"] + inimigo["velocidade"] * delta_t
         if novo_x + inimigo["sprite"].width >= config.janela.width or novo_x <= 0:
-            descer = True
-            inverter = True
+            bateu = True
             break
 
     # Se algum bateu, todos descem e invertem velocidade
-    if descer:
+    if bateu:
         for inimigo in lista_inimigos:
             inimigo["y"] += 70
             inimigo["velocidade"] *= -1
