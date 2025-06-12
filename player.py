@@ -5,9 +5,20 @@ import config
 global sprite
 velocidade = 200
 
+global vida
+
+respawnou = False
+tempo_desde_respawn = 0
+respawn_cooldown = 2
+
+ignore_colision = False
+
 def init():
     global sprite
+    global vida
+
     sprite = Sprite("assets/nave.png")
+    vida = 3
 
 def movement_processing(delta_t):
     global sprite

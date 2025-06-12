@@ -1,6 +1,11 @@
+import random
+
 from PPlay.sprite import *
 import config
 import jogo
+
+cooldown = 1000
+ultimo_tiro = 0
 
 def spawn(x, y, m, n):
     largura = Sprite("assets/inimigo.png").width
@@ -14,8 +19,17 @@ def spawn(x, y, m, n):
                 "sprite": Sprite("assets/inimigo.png"),
                 "x": x + (largura + gap_x) * coluna,
                 "y": y + (altura + gap_y) * linha,
-                "velocidade": 200
+                "velocidade": 100
             }
+
+            inimigo["x1"] = inimigo["x"] + inimigo["sprite"].width
+            inimigo["y1"] = inimigo["y"] + inimigo["sprite"].height
+
+            if linha == n-1:
+                inimigo["frontal"] = True
+            else:
+                inimigo["frontal"] = False
+
             jogo.lista_inimigos.append(inimigo)
 
 def move_todos(lista_inimigos, delta_t):
@@ -41,3 +55,13 @@ def move_todos(lista_inimigos, delta_t):
 def draw(inimigo):
     inimigo["sprite"].set_position(inimigo["x"], inimigo["y"])
     inimigo["sprite"].draw()
+
+def atirar(colunas):
+    atirador = random.randint(0, colunas)
+    i = 0
+    for inimigo in jogo.lista_inimigos:
+        if inimigo["frontal"] == True:
+            if i == atirador:
+                jogo.spawnar_tiro(inimigo["x"], inimigo["y1"], "inimigo") 
+                break
+            i += 1 
