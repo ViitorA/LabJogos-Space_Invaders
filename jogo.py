@@ -5,7 +5,8 @@ import config
 import player
 import inimigos
 
-lista_objetos = []
+lista_inimigos = []
+lista_tiros = []
 
 jogo_comecou = False
 inimigo_spawnado = False
@@ -27,53 +28,88 @@ def game_over():
         if config.teclado.key_pressed("ESC"):
             config.estado = "menu"
 
-            global lista_objetos, inimigo_spawnado
-            lista_objetos = []
+            global lista_tiros, lista_inimigos, inimigo_spawnado
+            lista_tiros = []
+            lista_inimigos = []
             inimigo_spawnado = False
-
             break
 
-def spawnar_tiro(sprites, x,y, owner):
+def spawnar_tiro(x,y, owner):
     tiro = {
-        "type": "tiro",
+        "sprite": Sprite("assets/tiro-jogador.png"),
         "x": x,
         "y": y
     }
 
+    tiro["width"] = tiro["sprite"].width
+    tiro["height"] = tiro["sprite"].height
+    tiro["x1"] = tiro["x"] + tiro["width"]
+
     match owner:
         case "jogador":
             tiro["owner"] = "jogador"
-            tiro["sprite"] = sprites["tiro-jogador"]
-            tiro["height"] = sprites["tiro-jogador"].height
-            tiro["width"] = sprites["tiro-jogador"].width
         case "inimigo":
             tiro["owner"] = "inimigo"
 
-    lista_objetos.append(tiro)
+    lista_tiros.append(tiro)
 
-def atualizar_objeto(objeto, delta_t):
-    if objeto["type"] == "tiro":
-        if objeto["y"] < 0 - objeto["height"]:
-            lista_objetos.remove(objeto)
+def atualizar_objetos(delta_t):
+    for tiro in lista_tiros:
+        if tiro["y"] + tiro["height"] < 0 :
+            lista_tiros.remove(tiro)
+            
+        if tiro["owner"] == "jogador":
+            tiro["y"] -= 200 * delta_t
+        elif tiro["owner"] == "inimigo":
+            tiro["y"] += 200 * delta_t  
         
-        if objeto["owner"] == "jogador":
-            objeto["y"] -= 200 * delta_t
-        elif objeto["owner"] == "inimigo":
-            objeto["y"] += 200 * delta_t  
-    elif objeto["type"] == "inimigo":
-        inimigos.move(objeto, delta_t)
+    for inimigo in lista_inimigos:
+        inimigos.move(inimigo, delta_t)
 
-        if objeto["y1"] >= player.sprite.y:
+        if inimigo["y1"] >= player.sprite.y:
             game_over()
 
-def desenhar_objeto(objeto):
-    if objeto["type"] == "inimigo":
-        inimigos.draw(objeto)
-    else:
-        objeto["sprite"].set_position(objeto["x"], objeto["y"])
-        objeto["sprite"].draw()
+def desenhar_objetos():
+    for tiro in lista_tiros:
+        tiro["sprite"].set_position(tiro["x"], tiro["y"])
+        tiro["sprite"].draw()
 
-def jogo(sprites):
+    for inimigo in lista_inimigos:
+        inimigos.draw(inimigo)
+
+def detector_colisoes():
+    # TODO: Colisão tá meio bugada ainda, tem alguns monstros que desaparecem ao invés de outro
+
+    tiros_para_remover = []
+    sprites_para_remover = []
+
+    for tiro in lista_tiros:
+        for inimigo in lista_inimigos:
+            if (
+                tiro["y"] <= inimigo["y1"] and
+                tiro["x"] <= inimigo["x1"] and
+                tiro["x1"] >= inimigo["x"]
+            ):
+                for linha in inimigo["sprites"]:
+                    for sprite in linha:
+                        if tiro["sprite"].collided_perfect(sprite):
+                            tiros_para_remover.append(tiro)
+                            sprites_para_remover.append((linha, sprite))
+                            break
+                    else: # executa somente se o for do sprite in linha não foi interrompido por um break
+                        continue
+                    break
+    
+    for tiro in tiros_para_remover:
+        if tiro in lista_tiros:
+            lista_tiros.remove(tiro)
+    
+    for linha, sprite in sprites_para_remover:
+        if sprite in linha:
+            linha.remove(sprite)
+
+
+def jogo():
     global jogo_comecou, inimigo_spawnado, ultimo_tiro
 
     delta_t = config.janela.delta_time()
@@ -82,14 +118,14 @@ def jogo(sprites):
     config.janela.set_background_color([20,10,40])
 
     if not jogo_comecou:
-        player.init(sprites)
+        player.init()
         player.sprite.set_position( (config.janela.width-player.sprite.width)/2, config.janela.height - player.sprite.height-20)
         ultimo_tiro = 0.0
 
         jogo_comecou = True
 
     if not inimigo_spawnado:
-        inimigos.spawn(sprites, 10, 10, 4, 3)
+        inimigos.spawn(10, 10, 4, 3)
         inimigo_spawnado = True
     
     if config.teclado.key_pressed("ESC"):
@@ -100,11 +136,11 @@ def jogo(sprites):
    
     # Ao apertar a barra de espaço o jogador atira
     if config.teclado.key_pressed("SPACE") and tempo_atual - ultimo_tiro > config.tempo_recarga:
-        spawnar_tiro(sprites, player.sprite.x + player.sprite.width/2, player.sprite.y - 10, "jogador")
+        spawnar_tiro(player.sprite.x + player.sprite.width/2, player.sprite.y - 10, "jogador")
         ultimo_tiro = pygame.time.get_ticks()
 
-    for objeto in lista_objetos:
-        atualizar_objeto(objeto, delta_t)
-        desenhar_objeto(objeto)
-
+    
+    atualizar_objetos(delta_t)
+    desenhar_objetos()
+    detector_colisoes()
     player.sprite.draw()

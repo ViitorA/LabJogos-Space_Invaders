@@ -5,9 +5,9 @@ import config
 global sprite
 velocidade = 200
 
-def init(sprites):
+def init():
     global sprite
-    sprite = sprites["player"]
+    sprite = Sprite("assets/nave.png")
 
 def movement_processing(delta_t):
     global sprite

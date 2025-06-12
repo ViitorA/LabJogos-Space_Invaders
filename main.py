@@ -1,3 +1,11 @@
+# O código funcionava normalmente, porém visto que não era modularizado e estava todo o código num mesmo arquivo, quase todo o código 
+# anterior teve de ser modificado ou removido p/a a modularização.
+
+# Criei o módulo config.py para algumas variáveis globais que são usadas em todo projeto
+# Criei os módulos menu.py e jogo.py para as "telas" do jogo
+# Criei os módulos player.py e inimigos.py para maior legibilidade e manipulação de dados
+# Criei o módulo utils.py para algumas funções úteis
+
 from PPlay.window import *
 from PPlay.gameimage import *
 from PPlay.sprite import *
@@ -10,25 +18,6 @@ from jogo import jogo
 from menu import menu
 from dificuldades import mostrar_dificuldades
 from dificuldades import alterar_dificuldade
-
-def carregar_sprites():
-    sprites = {
-        "botao_jogar": Sprite("assets/jogar.png"),
-        "botao_dificuldades": Sprite("assets/dificuldade.png"),
-        "botao_ranking": Sprite("assets/ranking.png"),
-        "botao_sair": Sprite("assets/sair.png"),
-
-        "botao_facil": Sprite("assets/facil.png"),
-        "botao_medio": Sprite("assets/medio.png"),
-        "botao_dificil": Sprite("assets/dificil.png"),
-
-        "player": Sprite("assets/nave.png"),
-        "tiro-jogador": Sprite("assets/tiro-jogador.png"),
-
-        "inimigo": Sprite("assets/inimigo.png")
-    }
-
-    return sprites
 
 def init():
     # Janela e controle
@@ -46,17 +35,14 @@ def init():
 
 init()
 
-# Carrega os recursos do jogo
-sprites = carregar_sprites()
-
 # Loop principal
 while True:
     if config.estado == "menu":
-        menu(sprites)
+        menu()
     elif config.estado == "dificuldades":
-        mostrar_dificuldades(sprites)
+        mostrar_dificuldades()
 
     elif config.estado == "jogo":
-        jogo(sprites)
+        jogo()
             
     config.janela.update()

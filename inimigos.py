@@ -1,18 +1,18 @@
+from PPlay.sprite import *
 import config
 import jogo
 
-def spawn(sprites, x, y, m, n):
+def spawn(x, y, m, n):
     inimigo = {
-        "type": "inimigo",
         "x": x,
         "y": y,
-        "x1": x + sprites["inimigo"].width * m + (sprites["inimigo"].width//2) * (m - 1), # largura da matriz de sprites
-        "y1": y + sprites["inimigo"].height * n + (sprites["inimigo"].height//2) * (n - 1), # altura da matriz de sprites
+        "x1": x + Sprite("assets/inimigo.png").width * m + (Sprite("assets/inimigo.png").width//2) * (m - 1), # largura da matriz de sprites
+        "y1": y + Sprite("assets/inimigo.png").height * n + (Sprite("assets/inimigo.png").height//2) * (n - 1), # altura da matriz de sprites
         "velocidade": 200,
 
-        "sprites": [[sprites["inimigo"] for _ in range(m)] for _ in range(n)] 
+        "sprites": [[Sprite("assets/inimigo.png") for _ in range(m)] for _ in range(n)] 
     }
-    jogo.lista_objetos.append(inimigo)
+    jogo.lista_inimigos.append(inimigo)
 
 def move(inimigo, delta_t):
     # move os inimigos 
