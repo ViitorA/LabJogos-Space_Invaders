@@ -54,7 +54,7 @@ def spawnar_tiro(x,y, owner):
     lista_tiros.append(tiro)
 
 def atualizar_objetos(delta_t):
-    for tiro in lista_tiros[:]:
+    for tiro in lista_tiros:
         if tiro["y"] + tiro["height"] < 0 :
             lista_tiros.remove(tiro)
             
@@ -63,10 +63,10 @@ def atualizar_objetos(delta_t):
         elif tiro["owner"] == "inimigo":
             tiro["y"] += 200 * delta_t  
         
-    inimigos.move_todos(lista_inimigos, delta_t)
+    for inimigo in lista_inimigos:
+        inimigos.move(inimigo, delta_t)
 
-    for inimigo in lista_inimigos[:]:
-        if inimigo["y"] + inimigo["sprite"].height >= player.sprite.y:
+        if inimigo["y1"] >= player.sprite.y:
             game_over()
 
 def desenhar_objetos():
@@ -81,22 +81,32 @@ def detector_colisoes():
     # TODO: Colisão tá meio bugada ainda, tem alguns monstros que desaparecem ao invés de outro
 
     tiros_para_remover = []
-    inimigos_para_remover = []
+    sprites_para_remover = []
 
     for tiro in lista_tiros:
         for inimigo in lista_inimigos:
-            if tiro["sprite"].collided_perfect(inimigo["sprite"]):
-                tiros_para_remover.append(tiro)
-                inimigos_para_remover.append(inimigo)
-                break  # Um tiro só pode acertar um inimigo
+            if (
+                tiro["y"] <= inimigo["y1"] and
+                tiro["x"] <= inimigo["x1"] and
+                tiro["x1"] >= inimigo["x"]
+            ):
+                for linha in inimigo["sprites"]:
+                    for sprite in linha:
+                        if tiro["sprite"].collided_perfect(sprite):
+                            tiros_para_remover.append(tiro)
+                            sprites_para_remover.append((linha, sprite))
+                            break
+                    else: # executa somente se o for do sprite in linha não foi interrompido por um break
+                        continue
+                    break
     
     for tiro in tiros_para_remover:
         if tiro in lista_tiros:
             lista_tiros.remove(tiro)
     
-    for inimigo in inimigos_para_remover:
-        if inimigo in lista_inimigos:
-            lista_inimigos.remove(inimigo)
+    for linha, sprite in sprites_para_remover:
+        if sprite in linha:
+            linha.remove(sprite)
 
 
 def jogo():
@@ -129,8 +139,8 @@ def jogo():
         spawnar_tiro(player.sprite.x + player.sprite.width/2, player.sprite.y - 10, "jogador")
         ultimo_tiro = pygame.time.get_ticks()
 
+
     atualizar_objetos(delta_t)
     desenhar_objetos()
     detector_colisoes()
-    
     player.sprite.draw()

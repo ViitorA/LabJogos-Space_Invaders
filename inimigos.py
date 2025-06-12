@@ -3,53 +3,43 @@ import config
 import jogo
 
 def spawn(x, y, m, n):
-    inimigo = {
-        "x": x,
-        "y": y,
-        "x1": x + Sprite("assets/inimigo.png").width * m + (Sprite("assets/inimigo.png").width//2) * (m - 1), # largura da matriz de sprites
-        "y1": y + Sprite("assets/inimigo.png").height * n + (Sprite("assets/inimigo.png").height//2) * (n - 1), # altura da matriz de sprites
-        "velocidade": 200,
+    largura = Sprite("assets/inimigo.png").width
+    altura = Sprite("assets/inimigo.png").height
+    gap_x = largura // 2
+    gap_y = altura // 2
 
-        "sprites": [[Sprite("assets/inimigo.png") for _ in range(m)] for _ in range(n)] 
-    }
-    jogo.lista_inimigos.append(inimigo)
+    for linha in range(n):
+        for coluna in range(m):
+            inimigo = {
+                "sprite": Sprite("assets/inimigo.png"),
+                "x": x + (largura + gap_x) * coluna,
+                "y": y + (altura + gap_y) * linha,
+                "velocidade": 200
+            }
+            jogo.lista_inimigos.append(inimigo)
 
-def move(inimigo, delta_t):
-    # move os inimigos 
-    inimigo["x"] += inimigo["velocidade"] * delta_t
-    inimigo["x1"] += inimigo["velocidade"] * delta_t
+def move_todos(lista_inimigos, delta_t):
+    # Descobrir se algum inimigo bateu na borda
+    descer = False
+    inverter = False
 
-    if inimigo["x1"] >= config.janela.width:
-        # Precisa fazer isso para a condicional não contar várias vezes 
-        inimigo["x"] -= 2
-        inimigo["x1"] -= 2
+    for inimigo in lista_inimigos:
+        novo_x = inimigo["x"] + inimigo["velocidade"] * delta_t
+        if novo_x + inimigo["sprite"].width >= config.janela.width or novo_x <= 0:
+            descer = True
+            inverter = True
+            break
 
-        # Quando os inimigos tocam no lado eles abaixam 70px
-        inimigo["y"] += 70
-        inimigo["y1"] += 70
-        inimigo["velocidade"] *= -1 # Inverte o movimento
-    if inimigo["x"] <= 0:
-        inimigo["x"] += 2
-        inimigo["x1"] += 2
+    # Se algum bateu, todos descem e invertem velocidade
+    if descer:
+        for inimigo in lista_inimigos:
+            inimigo["y"] += 70
+            inimigo["velocidade"] *= -1
 
-        inimigo["y"] += 70
-        inimigo["y1"] += 70
-        inimigo["velocidade"] *= -1
-
+    # Agora move todos normalmente
+    for inimigo in lista_inimigos:
+        inimigo["x"] += inimigo["velocidade"] * delta_t
 
 def draw(inimigo):
-    j = 0
-    
-    for linha in inimigo["sprites"]:
-        i = 0
-
-        for sprite in linha:
-            # Faz o cálculo da posição de cada sprite a partir do tamanho dos sprites e o tamanho do gap multiplicado pelo index do sprite na matriz
-            x = inimigo["x"] + (sprite.width + sprite.width/2) * i
-            y = inimigo["y"] + (sprite.height + sprite.height/2) * j
-
-            sprite.set_position(x,y)
-            sprite.draw()
-            i += 1
-            
-        j += 1
+    inimigo["sprite"].set_position(inimigo["x"], inimigo["y"])
+    inimigo["sprite"].draw()
