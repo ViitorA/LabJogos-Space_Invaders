@@ -2,7 +2,7 @@ import random
 
 from PPlay.sprite import *
 import config
-import jogo
+import states.jogo as jogo
 
 cooldown = 1000
 ultimo_tiro = 0

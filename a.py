@@ -1,6 +1,6 @@
 from PPlay.sprite import *
 import config
-import jogo
+import states.jogo as jogo
 
 def spawn(x, y, m, n):
     inimigo = {

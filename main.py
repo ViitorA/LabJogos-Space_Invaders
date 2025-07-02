@@ -14,10 +14,10 @@ from PPlay.mouse import *
 import pygame
 
 import config
-from jogo import jogo
-from menu import menu
-from dificuldades import mostrar_dificuldades
-from dificuldades import alterar_dificuldade
+from states.jogo import jogo
+from states.menu import menu
+from states.dificuldades import mostrar_dificuldades
+from states.dificuldades import alterar_dificuldade
 
 def init():
     # Janela e controle
