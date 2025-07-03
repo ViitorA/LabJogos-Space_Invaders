@@ -1,3 +1,4 @@
+import datetime
 import pygame
 from PPlay.sprite import *
 
@@ -9,32 +10,51 @@ import inimigos
 lista_inimigos = []
 lista_tiros = []
 
+wave_number = 1
+
 jogo_comecou = False
 inimigo_spawnado = False
 
+ultimo_tiro = 0.0
+
 def game_over():
-    while True:
-        config.janela.set_background_color([80,10,40])
+    config.janela.set_background_color([80,10,40])
 
-        # Uso algumas funções do pygame para poder achar as dimensões do texto renderizado p/a centralizá-lo
-        text_surface = pygame.font.SysFont('Tahoma', 50).render("GAME OVER", True, (255,255,255))
-        text_rect = text_surface.get_rect()
-        text_rect.centerx = config.janela.width // 2
-        text_rect.centery = config.janela.height // 2
+    # Uso algumas funções do pygame para poder achar as dimensões do texto renderizado p/a centralizá-lo
+    text_surface = pygame.font.SysFont('Tahoma', 50).render("GAME OVER", True, (255,255,255))
+    text_rect = text_surface.get_rect()
+    text_rect.centerx = config.janela.width // 2
+    text_rect.centery = config.janela.height // 2
 
-        config.janela.draw_text("GAME OVER", text_rect.x, text_rect.y, size = 50, color = (255,255,255), font_name = 'Tahoma', bold = True, italic = False) 
+    config.janela.draw_text("GAME OVER", text_rect.x, text_rect.y, size = 50, color = (255,255,255), font_name = 'Tahoma', bold = True, italic = False) 
         
-        config.janela.update()
-    
-        if config.teclado.key_pressed("ESC"):
-            config.estado = "menu"
+    config.janela.update()
 
-            global lista_tiros, lista_inimigos, inimigo_spawnado, jogo_comecou
-            lista_tiros = []
-            lista_inimigos = []
-            jogo_comecou = False
-            inimigo_spawnado = False
-            break
+    print("Qual é seu nome? ")
+    player_name = input()
+    with open("ranking.txt", "at") as f: # o 'with' automaticamente fecha o arquivo
+        f.write(player_name.upper() + '\n')
+        f.write(str(player.pontos) + '\n')
+        f.write(str(datetime.datetime.now()) + '\n')
+
+    config.estado = "menu"
+
+    # TODO: Fazer funções para não esquecer de resetar nada, percebo que tá faltando resetar as waves ocorridas
+    global lista_tiros, lista_inimigos, inimigo_spawnado, jogo_comecou
+    lista_tiros = []
+    lista_inimigos = []
+    jogo_comecou = False
+    inimigo_spawnado = False
+
+    player.pontos = 0
+
+def new_wave():
+    global wave_number, lista_tiros, lista_inimigos, inimigo_spawnado, jogo_comecou, ultimo_tiro
+    wave_number += 1
+    lista_tiros = []
+    player.center()
+    ultimo_tiro = 0.0
+    inimigo_spawnado = False
 
 def spawnar_tiro(x,y, owner):
     tiro = {
@@ -115,7 +135,6 @@ def detector_colisoes():
         if inimigo in lista_inimigos:
             lista_inimigos.remove(inimigo)
 
-
 def jogo():
     global jogo_comecou, inimigo_spawnado, ultimo_tiro
 
@@ -132,7 +151,9 @@ def jogo():
         jogo_comecou = True
 
     if not inimigo_spawnado:
-        inimigos.spawn(10, 10, 4, 3)
+        enemies_lines = 4 + wave_number
+        enemies_columns = 3 + wave_number
+        inimigos.spawn(10, 80, enemies_lines, enemies_columns)
         inimigo_spawnado = True
     
     if config.teclado.key_pressed("ESC"):
@@ -166,5 +187,8 @@ def jogo():
     desenhar_objetos()
     detector_colisoes()
     mostrar_ui()
+
+    if lista_inimigos == []:
+        new_wave()
 
     player.sprite.draw()

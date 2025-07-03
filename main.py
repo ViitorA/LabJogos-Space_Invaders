@@ -18,6 +18,7 @@ from states.jogo import jogo
 from states.menu import menu
 from states.dificuldades import mostrar_dificuldades
 from states.dificuldades import alterar_dificuldade
+from states.ranking import mostrar_ranking
 
 def init():
     # Janela e controle
@@ -32,17 +33,17 @@ def init():
     
     alterar_dificuldade(1) # Coloca a dificuldade em fácil
 
-
 init()
 
 # Loop principal
 while True:
     if config.estado == "menu":
         menu()
-    elif config.estado == "dificuldades":
-        mostrar_dificuldades()
-
     elif config.estado == "jogo":
         jogo()
-            
+    elif config.estado == "dificuldades":
+        mostrar_dificuldades()
+    elif config.estado == "ranking":
+        mostrar_ranking()
+
     config.janela.update()
