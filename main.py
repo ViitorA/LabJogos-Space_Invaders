@@ -4,7 +4,7 @@
 # Criei o módulo config.py para algumas variáveis globais que são usadas em todo projeto
 # Criei os módulos menu.py e jogo.py para as "telas" do jogo
 # Criei os módulos player.py e inimigos.py para maior legibilidade e manipulação de dados
-# Criei o módulo utils.py para algumas funções úteis
+# Criei o módulo uteis.py para algumas funções úteis
 
 from PPlay.window import *
 from PPlay.gameimage import *

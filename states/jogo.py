@@ -3,50 +3,30 @@ import pygame
 from PPlay.sprite import *
 
 import config
+from uteis import detector_colisoes
 from ui import mostrar_ui
 import player
 import inimigos
+import states.game_over as game_over
 
 lista_inimigos = []
 lista_tiros = []
 
 wave_number = 1
+wave_info = [0,0] # Armazena qtd linhas e colunas da wave atual
 
 jogo_comecou = False
 inimigo_spawnado = False
 
 ultimo_tiro = 0.0
 
-def game_over():
-    config.janela.set_background_color([80,10,40])
-
-    # Uso algumas funções do pygame para poder achar as dimensões do texto renderizado p/a centralizá-lo
-    text_surface = pygame.font.SysFont('Tahoma', 50).render("GAME OVER", True, (255,255,255))
-    text_rect = text_surface.get_rect()
-    text_rect.centerx = config.janela.width // 2
-    text_rect.centery = config.janela.height // 2
-
-    config.janela.draw_text("GAME OVER", text_rect.x, text_rect.y, size = 50, color = (255,255,255), font_name = 'Tahoma', bold = True, italic = False) 
-        
-    config.janela.update()
-
-    print("Qual é seu nome? ")
-    player_name = input()
-    with open("ranking.txt", "at") as f: # o 'with' automaticamente fecha o arquivo
-        f.write(player_name.upper() + '\n')
-        f.write(str(player.pontos) + '\n')
-        f.write(str(datetime.datetime.now()) + '\n')
-
-    config.estado = "menu"
-
-    # TODO: Fazer funções para não esquecer de resetar nada, percebo que tá faltando resetar as waves ocorridas
-    global lista_tiros, lista_inimigos, inimigo_spawnado, jogo_comecou
+def resetar_variaveis():
+    global lista_tiros, lista_inimigos, wave_number, inimigo_spawnado, jogo_comecou 
     lista_tiros = []
     lista_inimigos = []
+    wave_number = 1
     jogo_comecou = False
     inimigo_spawnado = False
-
-    player.pontos = 0
 
 def new_wave():
     global wave_number, lista_tiros, lista_inimigos, inimigo_spawnado, jogo_comecou, ultimo_tiro
@@ -92,7 +72,7 @@ def atualizar_objetos(delta_t):
 
     for inimigo in lista_inimigos[:]:
         if inimigo["y"] + inimigo["sprite"].height >= player.sprite.y:
-            game_over()
+            game_over.show()
 
 def desenhar_objetos():
     """DESENHA OS OBJETOS NA TELA"""
@@ -102,38 +82,6 @@ def desenhar_objetos():
 
     for inimigo in lista_inimigos:
         inimigos.draw(inimigo)
-
-def detector_colisoes():
-    tiros_para_remover = []
-    inimigos_para_remover = []
-
-    # TODO: IMPLEMENTAR A OTIMIZAÇÃO DE COLISÃO QUE O PROFESSOR FALOU 
-    for tiro in lista_tiros:
-        if tiro["owner"] == "jogador":
-            for inimigo in lista_inimigos:
-                if tiro["sprite"].collided_perfect(inimigo["sprite"]):                    
-# TODO: depois que o inimigo morrer, passar o true para o da linha anterior
-                    tiros_para_remover.append(tiro)
-                    inimigos_para_remover.append(inimigo)
-                    player.pontos += 10
-                    break  # Um tiro só pode acertar um inimigo
-        else: # Se o tiro for do inimigo
-            if not player.ignore_colision and tiro["sprite"].collided_perfect(player.sprite):
-                tiros_para_remover.append(tiro)
-                player.vida -= 1
-                if player.vida == 0:
-                    game_over()
-                else:
-                    player.respawnou = True
-                    player.center()
-
-    for tiro in tiros_para_remover:
-        if tiro in lista_tiros:
-            lista_tiros.remove(tiro)
-    
-    for inimigo in inimigos_para_remover:
-        if inimigo in lista_inimigos:
-            lista_inimigos.remove(inimigo)
 
 def jogo():
     global jogo_comecou, inimigo_spawnado, ultimo_tiro
@@ -154,6 +102,8 @@ def jogo():
         enemies_lines = 4 + wave_number
         enemies_columns = 3 + wave_number
         inimigos.spawn(10, 80, enemies_lines, enemies_columns)
+        wave_info[0] = enemies_lines
+        wave_info[1] = enemies_columns
         inimigo_spawnado = True
     
     if config.teclado.key_pressed("ESC"):
@@ -176,16 +126,18 @@ def jogo():
 
     # Ao apertar a barra de espaço o jogador atira
     if config.teclado.key_pressed("SPACE") and tempo_atual - ultimo_tiro > config.tempo_recarga:
+        print("ta-ut: " + str(tempo_atual) + ' - ' + str(ultimo_tiro))
+        print("Tempo recarga: " + str(config.tempo_recarga))
         spawnar_tiro(player.sprite.x + player.sprite.width/2, player.sprite.y - 10, "jogador")
         ultimo_tiro = pygame.time.get_ticks()
     
     if (tempo_atual - inimigos.ultimo_tiro) > inimigos.cooldown:
-        inimigos.atirar(3)
+        inimigos.atirar()
         inimigos.ultimo_tiro = pygame.time.get_ticks()
 
     atualizar_objetos(delta_t)
     desenhar_objetos()
-    detector_colisoes()
+    detector_colisoes(lista_tiros, lista_inimigos)
     mostrar_ui()
 
     if lista_inimigos == []:

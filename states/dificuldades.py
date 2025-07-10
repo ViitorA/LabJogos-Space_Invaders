@@ -1,19 +1,23 @@
-from utils import clicou
 from PPlay.sprite import *
 import config
+import uteis
+
+VELOCIDADE_FACIL = 300
+VELOCIDADE_MEDIO = 200
+VELOCIDADE_DIFICIL = 100
 
 def alterar_dificuldade(dificuldade):
     config.dificuldade = dificuldade
 
     if dificuldade == 1:
-        config.velocidade_jogador = 300
-        config.tempo_recarga = 200
-    elif dificuldade == 2:
-        config.velocidade_jogador = 220
-        config.tempo_recarga = 300
-    elif dificuldade == 3:
-        config.velocidade_jogador = 190
+        config.velocidade_jogador = VELOCIDADE_FACIL
         config.tempo_recarga = 400
+    elif dificuldade == 2:
+        config.velocidade_jogador = VELOCIDADE_MEDIO
+        config.tempo_recarga = 500
+    elif dificuldade == 3:
+        config.velocidade_jogador = VELOCIDADE_DIFICIL
+        config.tempo_recarga = 600
 
 def mostrar_dificuldades():
     botao_facil = Sprite("assets/facil.png")
@@ -31,13 +35,13 @@ def mostrar_dificuldades():
     botao_medio.draw()
     botao_dificil.draw()
 
-    if clicou(botao_facil):
+    if uteis.clicou(botao_facil):
         alterar_dificuldade(1)
         config.estado = "jogo"
-    elif clicou(botao_medio):
+    elif uteis.clicou(botao_medio):
         alterar_dificuldade(2)
         config.estado = "jogo"
-    elif clicou(botao_dificil):
+    elif uteis.clicou(botao_dificil):
         alterar_dificuldade(3)
         config.estado = "jogo"
 

@@ -4,7 +4,7 @@ from PPlay.sprite import *
 import config
 import states.jogo as jogo
 
-cooldown = 1000
+cooldown = 2000
 ultimo_tiro = 0
 
 def spawn(x, y, m, n):
@@ -13,13 +13,17 @@ def spawn(x, y, m, n):
     gap_x = largura // 2
     gap_y = altura // 2
 
+    pos_mat_x = 0
+    pos_mat_y = 0
     for linha in range(n):
         for coluna in range(m):
             inimigo = {
                 "sprite": Sprite("assets/inimigo.png"),
                 "x": x + (largura + gap_x) * coluna,
                 "y": y + (altura + gap_y) * linha,
-                "velocidade": 100
+                "pos_mat_x": pos_mat_x,
+                "pos_mat_y": pos_mat_y,
+                "velocidade": 50
             }
 
             inimigo["x1"] = inimigo["x"] + inimigo["sprite"].width
@@ -31,6 +35,9 @@ def spawn(x, y, m, n):
                 inimigo["frontal"] = False
 
             jogo.lista_inimigos.append(inimigo)
+            pos_mat_x += 1
+        pos_mat_x = 0
+        pos_mat_y += 1
 
 def move_todos(lista_inimigos, delta_t):
     # P/a ver se algum inimigo bateu na borda
@@ -56,12 +63,10 @@ def draw(inimigo):
     inimigo["sprite"].set_position(inimigo["x"], inimigo["y"])
     inimigo["sprite"].draw()
 
-def atirar(colunas):
-    atirador = random.randint(0, colunas)
-    i = 0
-    for inimigo in jogo.lista_inimigos:
-        if inimigo["frontal"] == True:
-            if i == atirador:
-                jogo.spawnar_tiro(inimigo["x"], inimigo["y1"], "inimigo") 
-                break
-            i += 1 
+def atirar():
+    inimigos_frontais = [inimigo for inimigo in jogo.lista_inimigos if inimigo["frontal"]]
+    if inimigos_frontais:
+        inimigo_escolhido = random.choice(inimigos_frontais)
+        jogo.spawnar_tiro(inimigo_escolhido["sprite"].x, 
+                          inimigo_escolhido["sprite"].y + inimigo_escolhido["sprite"].height, 
+                          "inimigo") 

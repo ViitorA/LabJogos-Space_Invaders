@@ -1,6 +1,6 @@
 import config
 from PPlay.sprite import *
-from utils import clicou
+import uteis
 
 def menu():
     config.janela.set_background_color([20,10,80])
@@ -22,11 +22,11 @@ def menu():
     botao_ranking.draw()
     botao_sair.draw()
 
-    if clicou(botao_jogar):
+    if uteis.clicou(botao_jogar):
         config.estado = "jogo"
-    elif clicou(botao_dificuldades):
+    elif uteis.clicou(botao_dificuldades):
         config.estado = "dificuldades"
-    elif clicou(botao_ranking):
+    elif uteis.clicou(botao_ranking):
         config.estado = "ranking"
-    elif clicou(botao_sair):
+    elif uteis.clicou(botao_sair):
         config.janela.close()

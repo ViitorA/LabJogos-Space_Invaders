@@ -50,19 +50,24 @@ def mostrar_ranking():
             )  
 
     if CAMINHO.is_file():
+        with open(CAMINHO) as f:
+            linhas = f.readlines()
+            linhas = [linha.strip() for linha in linhas]
+        
         global ranking_organizado
         if not ranking_organizado:
-            with open(CAMINHO) as f:
-                linhas = f.readlines()
-                linhas = [linha.strip() for linha in linhas]
-
             with open(CAMINHO, "wt") as f:
                 ordenar_ranking(f, linhas)
-
-        #with open(CAMINHO) as f:
-            # Obs.: Tenho que lembrar de verificar que tem 5 players pra começo de conversa
-            #for i in range(0, 3*5, 3): # Mostra os 5 primeiros colocados
-                
+        with open(CAMINHO) as f:
+            j = 1
+            for i in range(0, len(linhas), 3): # Mostra os 5 primeiros colocados
+                if (i + 2 < len(linhas) and i <= 14): # Garante que há bloco completo
+                    nome = linhas[i]
+                    pontos = linhas[i+1]
+                    data = linhas[i+2]
+                    user_rank = str(j) + ' - ' + nome + '\tPTS ' + pontos + '\t' + data
+                    config.janela.draw_text(user_rank, area[0] + 10, area[1] + i * 10, size = 30, color = YELLOW, font_name = 'Tahoma', bold = False, italic = False)
+                    j += 1
 
     else:
         text_surface = pygame.font.SysFont('Tahoma', 50).render("SEM JOGADORES", True, YELLOW)

@@ -1,9 +1,12 @@
 from PPlay.sprite import *
 
 import config
+import states.dificuldades
 
 global sprite
-velocidade = 200
+
+# Velocidade padrão é fácil
+velocidade = states.dificuldades.VELOCIDADE_FACIL
 
 global vida
 pontos = 0000
