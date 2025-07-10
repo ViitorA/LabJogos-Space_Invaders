@@ -16,13 +16,34 @@ ignore_colision = False
 tempo_desde_respawn = 0
 respawn_cooldown = 2
 
+global sprite_atual
 
 def init():
     global sprite
+    global sprite_atual
     global vida
 
     sprite = Sprite("assets/nave.png")
+    sprite_atual = 0
     vida = 3
+
+def change_sprite(id):
+    global sprite, sprite_atual
+    
+    x = sprite.x
+    y = sprite.y   
+    if id == 0:
+        sprite = Sprite("assets/nave.png")
+        sprite.set_position(x,y)
+        sprite_atual = 0
+    if id == 1:
+        sprite = Sprite("assets/nave_e1.png")
+        sprite.set_position(x,y)
+        sprite_atual = 1
+    if id == 2:
+        sprite = Sprite("assets/nave_e2.png")
+        sprite.set_position(x,y)
+        sprite_atual = 2
 
 def center():
     """CENTRALIZA O SPRITE DO PLAYER"""

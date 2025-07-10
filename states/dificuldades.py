@@ -11,13 +11,13 @@ def alterar_dificuldade(dificuldade):
 
     if dificuldade == 1:
         config.velocidade_jogador = VELOCIDADE_FACIL
-        config.tempo_recarga = 400
+        config.tempo_recarga = 200
     elif dificuldade == 2:
         config.velocidade_jogador = VELOCIDADE_MEDIO
-        config.tempo_recarga = 500
+        config.tempo_recarga = 300
     elif dificuldade == 3:
         config.velocidade_jogador = VELOCIDADE_DIFICIL
-        config.tempo_recarga = 600
+        config.tempo_recarga = 400
 
 def mostrar_dificuldades():
     botao_facil = Sprite("assets/facil.png")

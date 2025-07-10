@@ -12,6 +12,9 @@ import states.game_over as game_over
 lista_inimigos = []
 lista_tiros = []
 
+tempo_atirando = 0
+mudou_de_sprite = False
+
 wave_number = 1
 wave_info = [0,0] # Armazena qtd linhas e colunas da wave atual
 
@@ -19,6 +22,7 @@ jogo_comecou = False
 inimigo_spawnado = False
 
 ultimo_tiro = 0.0
+tempo_resfriamento = 0
 
 def resetar_variaveis():
     global lista_tiros, lista_inimigos, wave_number, inimigo_spawnado, jogo_comecou 
@@ -124,12 +128,53 @@ def jogo():
             
     player.movement_processing(delta_t)
 
+    global tempo_atirando,mudou_de_sprite, tempo_resfriamento
     # Ao apertar a barra de espaço o jogador atira
-    if config.teclado.key_pressed("SPACE") and tempo_atual - ultimo_tiro > config.tempo_recarga:
-        print("ta-ut: " + str(tempo_atual) + ' - ' + str(ultimo_tiro))
-        print("Tempo recarga: " + str(config.tempo_recarga))
-        spawnar_tiro(player.sprite.x + player.sprite.width/2, player.sprite.y - 10, "jogador")
-        ultimo_tiro = pygame.time.get_ticks()
+    if config.teclado.key_pressed("SPACE"):
+        tempo_resfriamento = 0
+        if (tempo_atual - ultimo_tiro > config.tempo_recarga):
+            spawnar_tiro(player.sprite.x + player.sprite.width/2, player.sprite.y - 10, "jogador")
+            ultimo_tiro = pygame.time.get_ticks()
+        
+        tempo_atirando += delta_t
+        
+        if int(tempo_atirando) >= 2 and mudou_de_sprite:
+            mudou_de_sprite = False
+
+        if int(tempo_atirando) >= 2 and not mudou_de_sprite:
+            if player.sprite_atual == 0:
+                player.change_sprite(1)
+                mudou_de_sprite = True
+                tempo_atirando = 0
+            elif player.sprite_atual == 1:
+                player.change_sprite(2)
+                mudou_de_sprite = True
+                tempo_atirando = 0
+            elif player.sprite_atual == 2:
+                player.vida -= 1
+                if player.vida == 0:
+                    game_over.show()
+                else:
+                    player.respawnou = True
+                    player.change_sprite(0)
+                    tempo_atirando = 0
+                    player.center()
+    else:
+        tempo_resfriamento += delta_t
+        tempo_atirando = 0
+        
+        if int(tempo_resfriamento) >= 2:
+            if player.sprite_atual == 1:
+                player.change_sprite(0)
+                mudou_de_sprite = True
+                tempo_resfriamento = 0
+            elif player.sprite_atual == 2:
+                player.change_sprite(1)
+                mudou_de_sprite = True
+                tempo_resfriamento = 0    
+    print(tempo_atirando)
+    print("Tempo de resfriamento: " + str(tempo_resfriamento))
+
     
     if (tempo_atual - inimigos.ultimo_tiro) > inimigos.cooldown:
         inimigos.atirar()
