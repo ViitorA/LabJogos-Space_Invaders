@@ -5,7 +5,7 @@ import config
 YELLOW = (200,100,0)
 THICKNESS = 10
 
-CAMINHO = Path("ranking.txt")
+CAMINHO = Path("Space Invaders/ranking.txt")
 
 ranking_organizado = False
 

@@ -8,8 +8,8 @@ cooldown = 2000
 ultimo_tiro = 0
 
 def spawn(x, y, m, n):
-    largura = Sprite("assets/inimigo.png").width
-    altura = Sprite("assets/inimigo.png").height
+    largura = Sprite("Space Invaders/assets/inimigo.png").width
+    altura = Sprite("Space Invaders/assets/inimigo.png").height
     gap_x = largura // 2
     gap_y = altura // 2
 
@@ -18,7 +18,7 @@ def spawn(x, y, m, n):
     for linha in range(n):
         for coluna in range(m):
             inimigo = {
-                "sprite": Sprite("assets/inimigo.png"),
+                "sprite": Sprite("Space Invaders/assets/inimigo.png"),
                 "x": x + (largura + gap_x) * coluna,
                 "y": y + (altura + gap_y) * linha,
                 "pos_mat_x": pos_mat_x,

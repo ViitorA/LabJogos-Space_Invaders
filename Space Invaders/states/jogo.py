@@ -1,4 +1,3 @@
-import datetime
 import pygame
 from PPlay.sprite import *
 
@@ -49,10 +48,10 @@ def spawnar_tiro(x,y, owner):
     match owner:
         case "jogador":
             tiro["owner"] = "jogador"
-            tiro["sprite"] = Sprite("assets/tiro-jogador.png")
+            tiro["sprite"] = Sprite("Space Invaders/assets/tiro-jogador.png")
         case "inimigo":
             tiro["owner"] = "inimigo"
-            tiro["sprite"] = Sprite("assets/tiro-inimigo.png")
+            tiro["sprite"] = Sprite("Space Invaders/assets/tiro-inimigo.png")
 
     tiro["width"] = tiro["sprite"].width
     tiro["height"] = tiro["sprite"].height

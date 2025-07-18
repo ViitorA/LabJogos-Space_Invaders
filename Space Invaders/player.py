@@ -23,7 +23,7 @@ def init():
     global sprite_atual
     global vida
 
-    sprite = Sprite("assets/nave.png")
+    sprite = Sprite("Space Invaders/assets/nave.png")
     sprite_atual = 0
     vida = 3
 
@@ -33,15 +33,15 @@ def change_sprite(id):
     x = sprite.x
     y = sprite.y   
     if id == 0:
-        sprite = Sprite("assets/nave.png")
+        sprite = Sprite("Space Invaders/assets/nave.png")
         sprite.set_position(x,y)
         sprite_atual = 0
     if id == 1:
-        sprite = Sprite("assets/nave_e1.png")
+        sprite = Sprite("Space Invaders/assets/nave_e1.png")
         sprite.set_position(x,y)
         sprite_atual = 1
     if id == 2:
-        sprite = Sprite("assets/nave_e2.png")
+        sprite = Sprite("Space Invaders/assets/nave_e2.png")
         sprite.set_position(x,y)
         sprite_atual = 2
 

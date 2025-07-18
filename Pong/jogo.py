@@ -22,18 +22,16 @@ def init():
 
 def init_objetos():
     global bolinha
-    bolinha = Sprite("assets/bolinha.png", frames=1);   
+    bolinha = Sprite("Pong/assets/bolinha.png", frames=1);   
     bolinha.set_position( (janela.width/2)-(bolinha.width) , (janela.height/2)-(bolinha.height))
 
     global pad_oponente
-    pad_oponente = Sprite("assets/pad.png", frames=1)
+    pad_oponente = Sprite("Pong/assets/pad.png", frames=1)
     pad_oponente.set_position(15, (janela.height/2)-(pad_oponente.height/2))
 
     global pad_jogador
-    pad_jogador = Sprite("assets/pad.png", frames=1)
+    pad_jogador = Sprite("Pong/assets/pad.png", frames=1)
     pad_jogador.set_position(janela.width-pad_jogador.width-15, (janela.height/2)-(pad_oponente.height/2))
-
-
 
 init()
 

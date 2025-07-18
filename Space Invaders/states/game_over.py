@@ -22,7 +22,7 @@ def show():
     player_name = input()
     ranking.ranking_organizado = False
 
-    with open("ranking.txt", "at") as f: # o 'with' automaticamente fecha o arquivo
+    with open("Space Invaders/ranking.txt", "at") as f: # o 'with' automaticamente fecha o arquivo
         f.write(player_name.upper() + '\n')
         f.write(str(player.pontos) + '\n')
         f.write(str(datetime.datetime.now()) + '\n')

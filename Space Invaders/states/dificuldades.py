@@ -20,13 +20,13 @@ def alterar_dificuldade(dificuldade):
         config.tempo_recarga = 400
 
 def mostrar_dificuldades():
-    botao_facil = Sprite("assets/facil.png")
+    botao_facil = Sprite("Space Invaders/assets/facil.png")
     botao_facil.set_position( (config.janela.width-botao_facil.width)/2, 40)
 
-    botao_medio = Sprite("assets/medio.png")
+    botao_medio = Sprite("Space Invaders/assets/medio.png")
     botao_medio.set_position( (config.janela.width-botao_medio.width)/2, 80+120)
 
-    botao_dificil = Sprite("assets/dificil.png")
+    botao_dificil = Sprite("Space Invaders/assets/dificil.png")
     botao_dificil.set_position( (config.janela.width-botao_dificil.width)/2, 120+240)
 
     config.janela.set_background_color([0,0,15])
